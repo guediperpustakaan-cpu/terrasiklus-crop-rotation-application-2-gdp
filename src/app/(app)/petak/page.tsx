@@ -25,7 +25,7 @@ export default function PlotsPage() {
   const [search, setSearch] = useState("");
 
   const farms = farmsQuery.data?.farms ?? [];
-  const plots = plotsQuery.data?.plots ?? [];
+  const plots = useMemo(() => plotsQuery.data?.plots ?? [], [plotsQuery.data?.plots]);
 
   const filtered = useMemo(() => {
     const keyword = search.trim().toLowerCase();

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   Bug,
@@ -129,15 +128,15 @@ export default function LandingPage() {
         </div>
 
         <div className="ts-animate-in relative">
-          <div className="overflow-hidden rounded-3xl border border-leaf-100 shadow-xl">
-            <Image
-              src="/images/hero-kebun.jpg"
-              alt="Petak kebun sayuran yang sehat dengan tanah subur"
-              width={1200}
-              height={900}
-              priority
-              className="h-64 w-full object-cover sm:h-80 lg:h-[420px]"
-            />
+          <div className="relative h-64 w-full overflow-hidden rounded-3xl border border-leaf-100 bg-gradient-to-br from-leaf-100 via-leaf-50 to-clay-100 shadow-xl sm:h-80 lg:h-[420px]">
+            <div className="absolute inset-0 opacity-70 [background:radial-gradient(320px_220px_at_25%_20%,rgba(255,255,255,0.85),transparent_65%),radial-gradient(280px_200px_at_80%_75%,rgba(196,154,111,0.45),transparent_65%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-leaf-700/35 to-transparent" />
+            <div className="absolute inset-0 grid place-items-center">
+              <div className="flex flex-col items-center gap-2 text-leaf-800/80">
+                <Sprout className="size-16" strokeWidth={1.25} />
+                <p className="text-xs font-semibold uppercase tracking-[0.2em]">Kebun Subur · Rotasi Sehat</p>
+              </div>
+            </div>
           </div>
           <div className="absolute -bottom-5 left-4 right-4 rounded-2xl border border-leaf-100 bg-white/95 p-3 shadow-lg backdrop-blur sm:left-8 sm:right-8">
             <p className="text-[11px] font-bold uppercase tracking-wide text-leaf-700">Contoh rekomendasi</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Save, Sprout, Tractor } from "lucide-react";
 import { Button, ErrorNote, Field, Modal } from "@/components/ui/primitives";
 import { useCreateFarm, useCreatePlot, useUpdatePlot } from "@/lib/api-client";
@@ -22,37 +22,50 @@ export function PlotForm({
   defaultFarmId?: number;
   plot?: PlotDto | null;
 }) {
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={plot ? "Ubah Petak" : "Tambah Petak Baru"}
+      description="Petak adalah bedeng kecil di kebun Anda yang dikelola secara terpisah dalam rotasi tanam."
+    >
+      {open ? (
+        <PlotFormBody
+          key={plot?.id ?? "petak-baru"}
+          farms={farms}
+          defaultFarmId={defaultFarmId}
+          plot={plot ?? null}
+          onClose={onClose}
+        />
+      ) : null}
+    </Modal>
+  );
+}
+
+function PlotFormBody({
+  farms,
+  defaultFarmId,
+  plot,
+  onClose,
+}: {
+  farms: FarmDto[];
+  defaultFarmId?: number;
+  plot: PlotDto | null;
+  onClose: () => void;
+}) {
   const toast = useToast();
   const createPlot = useCreatePlot();
   const updatePlot = useUpdatePlot(plot?.id ?? 0);
 
-  const [farmId, setFarmId] = useState<string>("");
-  const [name, setName] = useState("");
-  const [area, setArea] = useState("10");
-  const [areaUnit, setAreaUnit] = useState("m2");
-  const [soilType, setSoilType] = useState<string>(SOIL_TYPES[0]);
-  const [notes, setNotes] = useState("");
+  const [farmId, setFarmId] = useState<string>(plot ? String(plot.farmId) : "");
+  const [name, setName] = useState(plot?.name ?? "");
+  const [area, setArea] = useState(plot ? String(plot.area) : "10");
+  const [areaUnit, setAreaUnit] = useState(plot?.areaUnit ?? "m2");
+  const [soilType, setSoilType] = useState<string>(plot?.soilType ?? SOIL_TYPES[0]);
+  const [notes, setNotes] = useState(plot?.notes ?? "");
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    setError(null);
-    if (plot) {
-      setFarmId(String(plot.farmId));
-      setName(plot.name);
-      setArea(String(plot.area));
-      setAreaUnit(plot.areaUnit);
-      setSoilType(plot.soilType);
-      setNotes(plot.notes ?? "");
-    } else {
-      setFarmId(String(defaultFarmId ?? farms[0]?.id ?? ""));
-      setName("");
-      setArea("10");
-      setAreaUnit("m2");
-      setSoilType(SOIL_TYPES[0]);
-      setNotes("");
-    }
-  }, [open, plot, defaultFarmId, farms]);
+  const effectiveFarmId = farmId || String(defaultFarmId ?? farms[0]?.id ?? "");
 
   const submit = async () => {
     setError(null);
@@ -60,7 +73,7 @@ export function PlotForm({
       setError("Nama petak minimal 2 karakter.");
       return;
     }
-    if (!plot && !farmId) {
+    if (!plot && !effectiveFarmId) {
       setError("Pilih kebun terlebih dahulu. Buat kebun baru bila belum ada.");
       return;
     }
@@ -82,7 +95,7 @@ export function PlotForm({
         toast.push({ tone: "success", title: "Petak diperbarui", description: name.trim() });
       } else {
         await createPlot.mutateAsync({
-          farmId: Number(farmId),
+          farmId: Number(effectiveFarmId),
           name: name.trim(),
           area: areaValue,
           areaUnit,
@@ -98,107 +111,109 @@ export function PlotForm({
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title={plot ? "Ubah Petak" : "Tambah Petak Baru"}
-      description="Petak adalah bedeng kecil di kebun Anda yang dikelola secara terpisah dalam rotasi tanam."
-    >
-      <div className="space-y-4">
-        {!plot ? (
-          <Field label="Kebun" hint="Petak akan dikelompokkan dalam kebun ini.">
-            <select className="ts-input" value={farmId} onChange={(e) => setFarmId(e.target.value)}>
-              {farms.length === 0 ? <option value="">Belum ada kebun</option> : null}
-              {farms.map((farm) => (
-                <option key={farm.id} value={farm.id}>
-                  {farm.name}
-                  {farm.location ? ` — ${farm.location}` : ""}
-                </option>
-              ))}
-            </select>
-          </Field>
-        ) : null}
-
-        <Field label="Nama petak" hint="Contoh: Petak A — Sayuran Buah">
-          <input
+    <div className="space-y-4">
+      {!plot ? (
+        <Field label="Kebun" hint="Petak akan dikelompokkan dalam kebun ini.">
+          <select
             className="ts-input"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Petak A"
-          />
-        </Field>
-
-        <div className="grid grid-cols-3 gap-3">
-          <Field label="Luas" className="col-span-2">
-            <input
-              className="ts-input"
-              value={area}
-              inputMode="decimal"
-              onChange={(e) => setArea(e.target.value)}
-              placeholder="12"
-            />
-          </Field>
-          <Field label="Satuan">
-            <select className="ts-input" value={areaUnit} onChange={(e) => setAreaUnit(e.target.value)}>
-              <option value="m2">m²</option>
-              <option value="hektar">hektar</option>
-              <option value="pot">pot</option>
-            </select>
-          </Field>
-        </div>
-
-        <Field label="Jenis tanah" hint="Jenis tanah memengaruhi drainase dan pilihan tanaman.">
-          <select className="ts-input" value={soilType} onChange={(e) => setSoilType(e.target.value)}>
-            {SOIL_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {type.charAt(0).toUpperCase() + type.slice(1)}
+            value={effectiveFarmId}
+            onChange={(e) => setFarmId(e.target.value)}
+          >
+            {farms.length === 0 ? <option value="">Belum ada kebun</option> : null}
+            {farms.map((farm) => (
+              <option key={farm.id} value={farm.id}>
+                {farm.name}
+                {farm.location ? ` — ${farm.location}` : ""}
               </option>
             ))}
           </select>
         </Field>
+      ) : null}
 
-        <Field label="Catatan (opsional)">
-          <textarea
-            className="ts-input min-h-20"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Misal: dekat sumur, naikan bahan organik tiap musim"
+      <Field label="Nama petak" hint="Contoh: Petak A — Sayuran Buah">
+        <input
+          className="ts-input"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Petak A"
+        />
+      </Field>
+
+      <div className="grid grid-cols-3 gap-3">
+        <Field label="Luas" className="col-span-2">
+          <input
+            className="ts-input"
+            value={area}
+            inputMode="decimal"
+            onChange={(e) => setArea(e.target.value)}
+            placeholder="12"
           />
         </Field>
-
-        {error ? <ErrorNote message={error} /> : null}
-
-        <div className="flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
-            Batal
-          </Button>
-          <Button
-            onClick={submit}
-            loading={createPlot.isPending || updatePlot.isPending}
-            disabled={farms.length === 0 && !plot}
-          >
-            <Save className="size-4" /> {plot ? "Simpan Perubahan" : "Tambah Petak"}
-          </Button>
-        </div>
+        <Field label="Satuan">
+          <select className="ts-input" value={areaUnit} onChange={(e) => setAreaUnit(e.target.value)}>
+            <option value="m2">m²</option>
+            <option value="hektar">hektar</option>
+            <option value="pot">pot</option>
+          </select>
+        </Field>
       </div>
-    </Modal>
+
+      <Field label="Jenis tanah" hint="Jenis tanah memengaruhi drainase dan pilihan tanaman.">
+        <select className="ts-input" value={soilType} onChange={(e) => setSoilType(e.target.value)}>
+          {SOIL_TYPES.map((type) => (
+            <option key={type} value={type}>
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label="Catatan (opsional)">
+        <textarea
+          className="ts-input min-h-20"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Misal: dekat sumur, naikan bahan organik tiap musim"
+        />
+      </Field>
+
+      {error ? <ErrorNote message={error} /> : null}
+
+      <div className="flex justify-end gap-2">
+        <Button variant="ghost" onClick={onClose}>
+          Batal
+        </Button>
+        <Button
+          onClick={submit}
+          loading={createPlot.isPending || updatePlot.isPending}
+          disabled={farms.length === 0 && !plot}
+        >
+          <Save className="size-4" /> {plot ? "Simpan Perubahan" : "Tambah Petak"}
+        </Button>
+      </div>
+    </div>
   );
 }
 
 export function FarmForm({ open, onClose }: { open: boolean; onClose: () => void }) {
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Buat Kebun Baru"
+      description="Kebun adalah wadah untuk beberapa petak tanam Anda."
+    >
+      {open ? <FarmFormBody key="form-kebun-baru" onClose={onClose} /> : null}
+    </Modal>
+  );
+}
+
+function FarmFormBody({ onClose }: { onClose: () => void }) {
   const toast = useToast();
   const createFarm = useCreateFarm();
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (open) {
-      setName("");
-      setLocation("");
-      setError(null);
-    }
-  }, [open]);
 
   const submit = async () => {
     setError(null);
@@ -220,40 +235,33 @@ export function FarmForm({ open, onClose }: { open: boolean; onClose: () => void
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title="Buat Kebun Baru"
-      description="Kebun adalah wadah untuk beberapa petak tanam Anda."
-    >
-      <div className="space-y-4">
-        <Field label="Nama kebun" hint="Contoh: Kebun Rumah Bu Sari">
-          <input
-            className="ts-input"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Kebun Rumah"
-          />
-        </Field>
-        <Field label="Lokasi (opsional)">
-          <input
-            className="ts-input"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Bandung, Jawa Barat"
-          />
-        </Field>
-        {error ? <ErrorNote message={error} /> : null}
-        <div className="flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
-            Batal
-          </Button>
-          <Button onClick={submit} loading={createFarm.isPending}>
-            <Tractor className="size-4" /> Buat Kebun
-          </Button>
-        </div>
+    <div className="space-y-4">
+      <Field label="Nama kebun" hint="Contoh: Kebun Rumah Bu Sari">
+        <input
+          className="ts-input"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Kebun Rumah"
+        />
+      </Field>
+      <Field label="Lokasi (opsional)">
+        <input
+          className="ts-input"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Bandung, Jawa Barat"
+        />
+      </Field>
+      {error ? <ErrorNote message={error} /> : null}
+      <div className="flex justify-end gap-2">
+        <Button variant="ghost" onClick={onClose}>
+          Batal
+        </Button>
+        <Button onClick={submit} loading={createFarm.isPending}>
+          <Tractor className="size-4" /> Buat Kebun
+        </Button>
       </div>
-    </Modal>
+    </div>
   );
 }
 

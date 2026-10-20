@@ -21,8 +21,8 @@ export default function CropCatalogPage() {
   const [family, setFamily] = useState("semua");
   const [demand, setDemand] = useState<"semua" | NutrientDemand>("semua");
 
-  const crops = cropsQuery.data?.crops ?? [];
-  const families = familiesQuery.data?.families ?? [];
+  const crops = useMemo(() => cropsQuery.data?.crops ?? [], [cropsQuery.data?.crops]);
+  const families = useMemo(() => familiesQuery.data?.families ?? [], [familiesQuery.data?.families]);
 
   const filtered = useMemo(() => {
     const keyword = search.trim().toLowerCase();

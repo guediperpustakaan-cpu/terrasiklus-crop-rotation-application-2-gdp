@@ -128,7 +128,7 @@ export function RotationEngine({
   const [formOpen, setFormOpen] = useState(false);
 
   const analysis = rotationQuery.data?.analysis ?? null;
-  const crops = cropsQuery.data?.crops ?? [];
+  const crops = useMemo(() => cropsQuery.data?.crops ?? [], [cropsQuery.data?.crops]);
 
   const families = useMemo(() => {
     const set = new Set<string>();
