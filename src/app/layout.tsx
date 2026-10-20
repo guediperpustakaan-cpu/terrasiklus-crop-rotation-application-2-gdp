@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Providers } from "./providers";
+import { TrakteerWidget } from "@/components/TrakteerWidget";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="id">
       <body className="min-h-screen font-sans text-leaf-900 antialiased">
         <Providers>{children}</Providers>
+        <TrakteerWidget />
       </body>
     </html>
   );

@@ -9,6 +9,7 @@ import {
   Sprout,
   Sun,
   Tractor,
+  Gift,
 } from "lucide-react";
 
 const FEATURES = [
@@ -112,6 +113,14 @@ export default function LandingPage() {
             <Link href="/tanaman" className="ts-btn ts-btn-ghost">
               Lihat Katalog Tanaman
             </Link>
+            <a
+              href="https://github.com/bonarnaga-id/terrasiklus-crop-rotation-application-2-gdp/archive/refs/heads/main.zip"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ts-btn ts-btn-ghost opacity-80 hover:opacity-100 transition-opacity"
+            >
+              <Gift className="size-4 mr-2" /> Download Source
+            </a>
           </div>
           <dl className="mt-8 grid grid-cols-3 gap-3 sm:max-w-md">
             {[

@@ -4,6 +4,9 @@
 Aplikasi membantu merencanakan musim tanam berdasarkan **keluarga botani** dan **riwayat tanah**
 untuk mencegah hama serta mengoptimalkan hara. Seluruh antarmuka menggunakan Bahasa Indonesia.
 
+[![Open Source oleh MZF - 2026](https://img.shields.io/badge/Open%20Source%20oleh-MZF%20%E2%80%93%202026-9eab48?style=for-the-badge&logo=open-source-initiative&logoColor=white)](https://github.com/bonarnaga-id/terrasiklus-crop-rotation-application-2-gdp)
+[![Traktiran via Trakteer](https://img.shields.io/badge/Traktiran%20via-Trakteer-orange?style=for-the-badge&logo=ko-fi&logoColor=white)](https://trakteer.id/perpus_opera)
+
 ---
 
 ## ✨ Fitur
@@ -110,6 +113,51 @@ idempoten, aman dipanggil berulang.
    (Solanaceae) untuk mencegah hama menumpuk.”*
 
 Status akhir: `direkomendasikan` (≥ 68), `hati-hati` (45–67), `hindari` (< 45).
+
+## 📥 Download Source Code Lengkap
+
+Unduh source code penuh (ZIP, tanpa git history) langsung dari GitHub:
+
+```
+https://github.com/bonarnaga-id/terrasiklus-crop-rotation-application-2-gdp/archive/refs/heads/main.zip
+```
+
+Atau clone dengan history penuh:
+
+```bash
+git clone https://github.com/bonarnaga-id/terrasiklus-crop-rotation-application-2-gdp.git
+cd terrasiklus-crop-rotation-application-2-gdp
+npm install
+```
+
+Setelah clone, ikuti langkah **Menjalankan lokal** di atas.
+
+---
+
+## 🙏 Dukungan & Traktiran (Trakteer)
+
+Web app ini **gratis & bebas iklan**. Jika TerraSiklus bermanfaat untuk kebun/kehidupan Anda, pertimbangkan traktiran kopi kecil agar server & development tetap jalan:
+
+[![Traktiran via Trakteer](https://img.shields.io/badge/Traktiran%20di-Trakteer-FF6B00?style=for-the-badge&logo=ko-fi&logoColor=white)](https://trakteer.id/perpus_opera)
+
+- **Nominal**: Mulai **Rp6.000** (1 unit "Kopi") hingga kelipatannya
+- **Metode**: Kartu, e-wallet, QRIS, Virtual Account, dll.
+- **Widget inline**: Floating button di pojok kanan bawah aplikasi menampilkan pilihan nominal & QR code tanpa keluar halaman.
+
+---
+
+## 📄 Lisensi & Kredit
+
+**Open Source oleh MZF - 2026**
+
+Dibangun dengan semangat open source untuk komunitas petani kecil & pekebun rumahan Indonesia. Silakan gunakan, modifikasi, dan distribusikan sesuai kebutuhan.
+
+Stack utama:
+- Next.js 16 (React 19) · TypeScript
+- Tailwind CSS v4 (tema custom `leaf-*`, `clay-*`)
+- TanStack Query v5
+- Drizzle ORM + PostgreSQL (Neon-ready)
+- Lucide React icons
 
 ## 🚀 Menjalankan lokal
 
